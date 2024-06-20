@@ -11,13 +11,13 @@ COPY package*.json ./
 RUN npm install
 
 # Skopiuj resztę plików aplikacji
-COPY . .
-
-# Skompiluj aplikację (np. za pomocą komendy `npm run build`)
-RUN npm run build
+COPY . /home/frontEnd
 
 # Ustaw port, na którym działa aplikacja
-EXPOSE 3000
+EXPOSE 4000
+
+# Skompiluj aplikację (np. za pomocą komendy `npm run build`)
+RUN npm run
 
 # Uruchom serwer aplikacji
 CMD ["npm", "start"]
