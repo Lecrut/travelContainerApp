@@ -13,6 +13,40 @@ def set_mongo_client():
 
     collections["users"] = mongo.travel.users
 
+
+def isUserExists(userName):
+    query = {"username": userName}
+    document = collections["users"].find_one(query)
+
+    return document
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    try:
+        data = flask.request.get_json(force=True)
+
+        username = data["username"]
+        password = data["password"]
+
+    except:
+        return "Error", 400
+
+    user = isUserExists(username)
+
+    if user:
+        return "Error", 400
+
+    collections["users"].insert_one( 
+        {
+            "username": username,
+            "password": password,
+        }
+    )
+
+    return "Ok", 200
+
+
 if __name__ == "__main__":
     set_mongo_client()
 

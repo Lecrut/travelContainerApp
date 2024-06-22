@@ -9,14 +9,11 @@ from pymongo.server_api import ServerApi
 
 app = flask.Flask("__name__", template_folder="home/front/templates")
 
-collections = {}
+connection_uri = "http://connect:4002"
 
 def get_mongo_client():
     uri = "mongodb://user:password@mongodb"
-
-    mongo = MongoClient(uri, server_api=ServerApi("1"))
-    collections["users"] = mongo.travel.users
-    
+    mongo = MongoClient(uri, server_api=ServerApi("1"))    
     return mongo
 
 def init_sessions(mongo):
@@ -28,6 +25,18 @@ def init_sessions(mongo):
 
     flask_session.Session(app)
 
+def is_register():
+    username = flask.request.form.get("username", "admin")
+    password = flask.request.form.get("password", "password")
+
+    response = requests.post(
+        f"{connection_uri}/register",
+        json={"username": username, "password": password},
+    )
+
+    if response.ok:
+        return True
+    return False
 
 @app.route("/")
 def index():
@@ -41,7 +50,11 @@ def login():
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
+    if flask.request.method == "POST" and is_register():
+        return flask.redirect("/")
+
     return flask.render_template("register.html")
+
 
 
 @app.route("/logout")
