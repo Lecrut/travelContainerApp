@@ -10,6 +10,7 @@ from pymongo.server_api import ServerApi
 app = flask.Flask("__name__", template_folder="home/front/templates")
 
 connection_uri = "http://connect:4002"
+api_uri = "http://api:4001"
 
 def get_mongo_client():
     uri = "mongodb://user:password@mongodb"
@@ -78,7 +79,6 @@ def register():
     return flask.render_template("register.html")
 
 
-
 @app.route("/logout")
 def logout():
     flask.session["is_logged_in"] = False
@@ -87,6 +87,19 @@ def logout():
 @app.route("/form")
 def form():
     return flask.render_template("form.html")
+
+@app.route("/get_attractions", methods=["POST"])
+def get_attractions():
+    city = flask.request.form.get("city", "")
+
+    response = requests.post(
+        f"{api_uri}/get_attractions",
+        json={"place": city},
+    )
+
+    # if response.ok:
+    return response.text
+    # return "No attractions " + response.text
 
 
 if __name__ == "__main__":
