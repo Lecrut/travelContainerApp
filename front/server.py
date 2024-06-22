@@ -7,9 +7,26 @@ import requests
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-app = flask.Flask("__name__", template_folder="home/app/templates")
-database_base_url = "http://127.0.0.1:27018"
-# api_base_url = "http://gierka-api:4002"
+app = flask.Flask("__name__", template_folder="home/front/templates")
+
+collections = {}
+
+def get_mongo_client():
+    uri = "mongodb://user:password@mongodb"
+
+    mongo = MongoClient(uri, server_api=ServerApi("1"))
+    collections["users"] = mongo.travel.users
+    
+    return mongo
+
+def init_sessions(mongo):
+    app.config["SESSION_TYPE"] = "mongodb"
+    app.config["SESSION_MONGODB"] = mongo
+    app.config["SESSION_MONGODB_DB"] = "travelsDB"
+    app.config["SESSION_MONGODB_COLLECT"] = "sessions"
+    app.permament_session_lifetime = datetime.timedelta(hours=24)
+
+    flask_session.Session(app)
 
 
 @app.route("/")
@@ -33,4 +50,7 @@ def logout():
 
 
 if __name__ == "__main__":
+    mongo = get_mongo_client()
+    init_sessions(mongo)
+
     app.run(debug=True, port=4000, host="0.0.0.0")
