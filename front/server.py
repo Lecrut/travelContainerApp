@@ -38,6 +38,19 @@ def is_register():
         return True
     return False
 
+def is_signed():
+    username = flask.request.form.get("username", "admin")
+    password = flask.request.form.get("password", "password")
+
+    response = requests.post(
+        f"{connection_uri}/login",
+        json={"username": username, "password": password},
+    )
+
+    if response.ok:
+        return True
+    return False
+
 @app.route("/")
 def index():
     return flask.render_template("index.html")
@@ -45,7 +58,11 @@ def index():
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
+    if flask.request.method == "POST" and is_signed():
+        return flask.redirect("/")
+
     return flask.render_template("login.html")
+
 
 
 @app.route("/register", methods=["POST", "GET"])
