@@ -28,6 +28,11 @@ services:
     image: frontend
     ports: 
       - 4000:4000
+  
+  connect:
+    image: connect
+    ports:
+      - 4002:4002
 
 volumes:
   mongodb-data:
