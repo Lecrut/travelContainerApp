@@ -19,7 +19,7 @@ def get_mongo_client():
 def init_sessions(mongo):
     app.config["SESSION_TYPE"] = "mongodb"
     app.config["SESSION_MONGODB"] = mongo
-    app.config["SESSION_MONGODB_DB"] = "travelsDB"
+    app.config["SESSION_MONGODB_DB"] = "travel"
     app.config["SESSION_MONGODB_COLLECT"] = "sessions"
     app.permament_session_lifetime = datetime.timedelta(hours=24)
 
@@ -53,12 +53,16 @@ def is_signed():
 
 @app.route("/")
 def index():
+    if flask.session.get("is_logged_in", True):
+        return flask.redirect("/form")
+    
     return flask.render_template("index.html")
 
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if flask.request.method == "POST" and is_signed():
+        flask.session["is_logged_in"] = True
         return flask.redirect("/")
 
     return flask.render_template("login.html")
@@ -68,6 +72,7 @@ def login():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     if flask.request.method == "POST" and is_register():
+        flask.session["is_logged_in"] = True
         return flask.redirect("/")
 
     return flask.render_template("register.html")
@@ -76,7 +81,12 @@ def register():
 
 @app.route("/logout")
 def logout():
+    flask.session["is_logged_in"] = False
     return flask.redirect("/")
+
+@app.route("/form")
+def form():
+    return flask.render_template("form.html")
 
 
 if __name__ == "__main__":
