@@ -28,6 +28,11 @@ services:
     image: frontend
     ports: 
       - 4000:4000
+    
+  api: 
+    image: api
+    ports:
+      - 4001:4001
   
   connect:
     image: connect
