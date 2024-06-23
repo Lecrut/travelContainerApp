@@ -33,6 +33,8 @@ services:
     image: api
     ports:
       - 4001:4001
+    environment:
+      - OPENAI_API_KEY=${OPEN_AI_KEY}
   
   connect:
     image: connect

@@ -15,10 +15,14 @@
             Log out
         </button>
 
+        <br>
+
         <p>Write place and I will send you attractions.</p>
         <form action="/get_attractions" method="post">
             <input type="text" id="city" name="city">
             <input type="submit" value="Get attractions">
         </form>
+
+        <p>{{ response }}</p>
     </body>
 </html>

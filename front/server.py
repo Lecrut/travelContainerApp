@@ -97,9 +97,7 @@ def get_attractions():
         json={"place": city},
     )
 
-    # if response.ok:
-    return response.text
-    # return "No attractions " + response.text
+    return flask.render_template("form.html", response = response.text)
 
 
 if __name__ == "__main__":
